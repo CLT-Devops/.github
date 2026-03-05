@@ -1,0 +1,88 @@
+name: "Issue Web"
+description: "Issue web no formato Vx.y.z.0 - [Label] [Type] Objetivo"
+title: "V0.0.0.0 - [LABEL] [TYPE] "
+projects: ["CLT-Devops/3"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Formato esperado do titulo:
+        `V0.1.3.0 - [Label] [Type] Objetivo`
+        Regra:
+        Para Web, use um `.0` extra na versao.
+
+  - type: input
+    id: version
+    attributes:
+      label: Versao
+      description: Use o padrao Web com 4 blocos (ex.: V0.1.3.0).
+      placeholder: "V0.1.3.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: label
+    attributes:
+      label: Label
+      description: Label obrigatoria para classificacao.
+      options:
+        - DB
+        - AI
+        - Code
+        - Server
+        - Domain
+        - Story
+        - API
+        - Webhook
+        - AWS
+        - ETL
+        - Docker
+        - CI/CD
+        - Log
+        - QA
+        - Sec
+        - UI/UX
+        - Layout
+        - Component
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: Type obrigatorio da issue.
+      options:
+        - Task
+        - Bug
+        - Improvement
+        - Feature
+        - Story
+    validations:
+      required: true
+
+  - type: input
+    id: objective
+    attributes:
+      label: Objetivo
+      description: Objetivo curto e direto (entra no titulo).
+      placeholder: "Ajustar layout da tela de login"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto
+      description: Detalhes tecnicos, links, evidencias e criterios.
+      placeholder: "Contexto completo da issue..."
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmacoes
+      options:
+        - label: Preenchi Type e Label obrigatorios.
+          required: true
+        - label: Ajustarei o titulo final no formato Vx.y.z.0 - [Label] [Type] Objetivo.
+          required: true
