@@ -1,0 +1,62 @@
+name: "Bug report"
+description: "Reportar um erro ou comportamento inesperado"
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reportar. Preencha os campos abaixo para facilitar a reprodução.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição do problema
+      description: O que aconteceu? Qual era o comportamento esperado?
+      placeholder: "Descreva claramente o bug e o comportamento esperado."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      description: Passo a passo para reproduzir o problema.
+      placeholder: |
+        1. Vá para ...
+        2. Clique em ...
+        3. Veja o erro ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, prints ou evidências
+      description: Cole logs relevantes ou links/imagens que ajudem no diagnóstico.
+      placeholder: "Cole aqui logs, stack trace ou prints."
+      render: shell
+
+  - type: input
+    id: version
+    attributes:
+      label: Versão afetada
+      description: Versão da aplicação/pacote/serviço.
+      placeholder: "ex.: 1.8.2"
+
+  - type: input
+    id: environment
+    attributes:
+      label: Ambiente
+      description: Onde o problema ocorre?
+      placeholder: "ex.: produção / staging / local (macOS 14, Node 20)"
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmações
+      options:
+        - label: Pesquisei issues existentes e não encontrei duplicata.
+          required: true
+        - label: Posso fornecer mais contexto se necessário.
+          required: false

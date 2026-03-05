@@ -1,0 +1,47 @@
+[
+  {
+    "name": "bug",
+    "color": "d73a4a",
+    "description": "Algo nao esta funcionando"
+  },
+  {
+    "name": "enhancement",
+    "color": "a2eeef",
+    "description": "Nova funcionalidade ou melhoria"
+  },
+  {
+    "name": "documentation",
+    "color": "0075ca",
+    "description": "Mudancas ou ajustes de documentacao"
+  },
+  {
+    "name": "question",
+    "color": "d876e3",
+    "description": "Duvida ou pedido de esclarecimento"
+  },
+  {
+    "name": "chore",
+    "color": "cfd3d7",
+    "description": "Tarefa de manutencao sem impacto funcional"
+  },
+  {
+    "name": "needs-triage",
+    "color": "fbca04",
+    "description": "Precisa de triagem inicial"
+  },
+  {
+    "name": "priority:high",
+    "color": "b60205",
+    "description": "Prioridade alta"
+  },
+  {
+    "name": "priority:medium",
+    "color": "d4c5f9",
+    "description": "Prioridade media"
+  },
+  {
+    "name": "priority:low",
+    "color": "0e8a16",
+    "description": "Prioridade baixa"
+  }
+]
