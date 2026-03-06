@@ -1,30 +1,37 @@
-## Resumo
+## Objetivo
+<!-- O que este PR resolve? -->
 
-Descreva objetivamente o que foi alterado e por quê.
+## Issue relacionada
+<!-- Ex.: Closes #123 -->
+Closes #
 
-## Tipo de mudança
+## O que mudou
+- 
+- 
+- 
 
-- [ ] Correção de bug
-- [ ] Nova funcionalidade
-- [ ] Refatoração
-- [ ] Atualização de documentação
-- [ ] Mudança que pode causar impacto (breaking change)
+## Como validar
+1. 
+2. 
+3. 
 
-## Como foi testado
+## Impacto tecnico
+- Banco de dados:
+- API/Webhook:
+- Infra/AWS:
+- Seguranca:
+- Performance:
 
-Descreva os testes executados para validar a mudança.
+## Deploy e rollback
+- Deploy:
+- Rollback:
 
-- [ ] Testes locais executados
-- [ ] Testes automatizados passando
-- [ ] Validação manual realizada
+## Evidencias (opcional)
+<!-- Prints, logs, curl, etc. -->
 
 ## Checklist
-
-- [ ] O código segue os padrões do projeto
-- [ ] Adicionei/atualizei testes quando necessário
-- [ ] Atualizei a documentação quando necessário
-- [ ] Não inclui segredos, tokens ou dados sensíveis
-
-## Evidências (opcional)
-
-Inclua prints, logs ou links relevantes.
+- [ ] Li e revisei as mudancas
+- [ ] Validei localmente
+- [ ] Atualizei testes (ou justifiquei por que nao)
+- [ ] Nao introduz breaking change (ou documentei)
+- [ ] Documentacao atualizada (se aplicavel)
