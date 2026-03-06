@@ -4,14 +4,6 @@ title: "[SI] - "
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Formato esperado do titulo:
-        `[SI] - Objetivo`
-        Regra:
-        Sub-issue e sempre `Task`.
-
   - type: dropdown
     id: label
     attributes:
@@ -39,17 +31,6 @@ body:
     validations:
       required: true
 
-  - type: dropdown
-    id: type
-    attributes:
-      label: Type
-      description: Sub-issue e sempre task.
-      options:
-        - Task
-      default: 0
-    validations:
-      required: true
-
   - type: input
     id: objective
     attributes:
@@ -58,18 +39,3 @@ body:
       placeholder: "Criar migration para coluna status"
     validations:
       required: true
-
-  - type: textarea
-    id: context
-    attributes:
-      label: Contexto
-      description: Dependencias, criterios de aceite e detalhes tecnicos.
-      placeholder: "Contexto completo do sub-item..."
-
-  - type: checkboxes
-    id: checks
-    attributes:
-      label: Confirmacoes
-      options:
-        - label: Ajustarei o titulo final no formato [SI] - Objetivo.
-          required: true
