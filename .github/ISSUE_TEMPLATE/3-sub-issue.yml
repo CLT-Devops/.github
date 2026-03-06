@@ -1,5 +1,5 @@
-name: "Sub-issue (Task)"
-description: "Sub-issue no formato [SI] - Objetivo (sempre task)"
+name: "Sub-issue"
+description: "Sub-issue no formato [SI] - Objetivo"
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:

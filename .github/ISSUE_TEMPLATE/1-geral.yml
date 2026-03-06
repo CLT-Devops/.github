@@ -1,5 +1,5 @@
 name: "Issue Geral"
-description: "Vx.y.z - [Label] [Type] Objetivo"
+description: "V1.0.0 - [Label] [Type] Objetivo"
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:
@@ -7,8 +7,8 @@ body:
     id: version
     attributes:
       label: Versao
-      description: "Use o padrao com 3 blocos (ex.: V0.1.3)."
-      placeholder: "V0.1.3"
+      description: "Use o padrao com 3 blocos (ex.: V1.0.0)."
+      placeholder: "V1.0.0"
     validations:
       required: true
 
