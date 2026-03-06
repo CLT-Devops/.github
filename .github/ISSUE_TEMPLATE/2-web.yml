@@ -1,5 +1,6 @@
 name: "Issue Web"
-description: "V1.0.0.0 - [Label] [Type] Objetivo"
+description: "V1.0.0.0 - [Label][Type] - Objetivo"
+title: "{Versao} - [{Label}][{Type}] - {Objetivo}"
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:
