@@ -1,9 +1,16 @@
 name: "Sub-issue (Task)"
 description: "Sub-issue no formato [SI] - Objetivo (sempre task)"
-title: "[SI] - "
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:
+  - type: textarea
+    id: description_text
+    attributes:
+      label: Descricao
+      placeholder: "Descreva resumidamente a demanda..."
+    validations:
+      required: true
+
   - type: dropdown
     id: label
     attributes:

@@ -1,8 +1,15 @@
 name: "Issue Geral"
 description: "Vx.y.z - [Label] [Type] Objetivo"
-title: "V0.0.0 - [LABEL] [TYPE] "
 projects: ["CLT-Devops/3"]
 body:
+  - type: textarea
+    id: description_text
+    attributes:
+      label: Descricao
+      placeholder: "Descreva resumidamente a demanda..."
+    validations:
+      required: true
+
   - type: input
     id: version
     attributes:
