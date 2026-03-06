@@ -1,15 +1,8 @@
 name: "Issue Web"
 description: "Vx.y.z.0 - [Label] [Type] Objetivo"
 projects: ["CLT-Devops/3"]
+type: "Task"
 body:
-  - type: textarea
-    id: description_text
-    attributes:
-      label: Descricao
-      placeholder: "Descreva resumidamente a demanda..."
-    validations:
-      required: true
-
   - type: input
     id: version
     attributes:
@@ -66,5 +59,13 @@ body:
       label: Objetivo
       description: Objetivo curto e direto (entra no titulo).
       placeholder: "Ajustar layout da tela de login"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description_text
+    attributes:
+      label: Descricao
+      placeholder: "Descreva resumidamente a demanda..."
     validations:
       required: true

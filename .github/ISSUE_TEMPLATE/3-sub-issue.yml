@@ -3,14 +3,6 @@ description: "Sub-issue no formato [SI] - Objetivo (sempre task)"
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:
-  - type: textarea
-    id: description_text
-    attributes:
-      label: Descricao
-      placeholder: "Descreva resumidamente a demanda..."
-    validations:
-      required: true
-
   - type: dropdown
     id: label
     attributes:
@@ -44,5 +36,13 @@ body:
       label: Objetivo
       description: Objetivo curto e direto para o sub-item.
       placeholder: "Criar migration para coluna status"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description_text
+    attributes:
+      label: Descricao
+      placeholder: "Descreva resumidamente a demanda..."
     validations:
       required: true
