@@ -1,6 +1,5 @@
 name: "Issue Web"
 description: "V1.0.0.0 - [Label][Type] - Objetivo"
-title: "{Versao} - [{Label}][{Type}] - {Objetivo}"
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:
@@ -51,15 +50,6 @@ body:
         - Improvement
         - Feature
         - Story
-    validations:
-      required: true
-
-  - type: input
-    id: objective
-    attributes:
-      label: Objetivo
-      description: Objetivo curto e direto (entra no titulo).
-      placeholder: "Ajustar layout da tela de login"
     validations:
       required: true
 

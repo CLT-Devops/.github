@@ -1,6 +1,5 @@
 name: "Sub-issue"
 description: "Sub-issue no formato [SI] - Objetivo"
-title: "[SI] - {Objetivo}"
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:
@@ -28,15 +27,6 @@ body:
         - UI/UX
         - Layout
         - Component
-    validations:
-      required: true
-
-  - type: input
-    id: objective
-    attributes:
-      label: Objetivo
-      description: Objetivo curto e direto para o sub-item.
-      placeholder: "Criar migration para coluna status"
     validations:
       required: true
 
