@@ -1,9 +1,16 @@
-## Objetivo
-<!-- O que este PR resolve? -->
+## Titulo do PR (padrao)
+<!--
+Use um destes formatos:
+Vx.y.z - [Label][Type] - Objetivo
+Vx.y.z - [SI] - Objetivo
+-->
 
 ## Issue relacionada
-<!-- Ex.: Closes #123 -->
+<!-- Obrigatorio. Ex.: Closes #123 -->
 Closes #
+
+## Objetivo e contexto
+<!-- O problema que este PR resolve e por que agora -->
 
 ## O que mudou
 - 
@@ -15,23 +22,21 @@ Closes #
 2. 
 3. 
 
-## Impacto tecnico
-- Banco de dados:
-- API/Webhook:
-- Infra/AWS:
-- Seguranca:
-- Performance:
+## Observabilidade e alertas
+- correlation_id nos logs impactados:
+- eventos/telemetria alterados:
+- alerta Slack criado/ajustado:
 
-## Deploy e rollback
-- Deploy:
-- Rollback:
+## Risco e rollback
+- Risco principal:
+- Plano de rollback:
 
-## Evidencias (opcional)
-<!-- Prints, logs, curl, etc. -->
-
-## Checklist
-- [ ] Li e revisei as mudancas
-- [ ] Validei localmente
-- [ ] Atualizei testes (ou justifiquei por que nao)
-- [ ] Nao introduz breaking change (ou documentei)
+## Checklist DoD (obrigatorio)
+- [ ] Escopo da issue foi entregue e validado
+- [ ] Testes (unit/integration/e2e) cobrindo o fluxo alterado
+- [ ] CI passou (lint, testes, checks de contrato quando aplicavel)
+- [ ] Logs estruturados atualizados (com correlation_id quando aplicavel)
+- [ ] Alertas Slack revisados/testados (quando aplicavel)
+- [ ] Nao ha segredo/token hardcoded
+- [ ] Sem breaking change nao documentada
 - [ ] Documentacao atualizada (se aplicavel)
