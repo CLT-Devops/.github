@@ -1,0 +1,216 @@
+name: Sync Issue Workflow Callers
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run mode (dry-run or apply)"
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - apply
+      repo_filter:
+        description: "Optional regex filter for repo names"
+        required: false
+        default: ""
+        type: string
+      central_ref:
+        description: "Ref for central reusable workflow"
+        required: true
+        default: main
+        type: string
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/sync-issue-metadata.yml
+      - .github/workflows/sync-issue-workflow-callers.yml
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  sync-callers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate token
+        run: |
+          if [ -z "${{ secrets.ORG_WORKFLOW_SYNC_TOKEN }}" ]; then
+            echo "Missing required secret ORG_WORKFLOW_SYNC_TOKEN" >&2
+            exit 1
+          fi
+
+      - name: Sync caller workflow to org repositories
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b
+        with:
+          github-token: ${{ secrets.ORG_WORKFLOW_SYNC_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const eventName = context.eventName;
+            const modeInput = core.getInput("mode") || "";
+            const mode = modeInput || (eventName === "workflow_dispatch" ? "dry-run" : "apply");
+            const repoFilter = core.getInput("repo_filter") || "";
+            const centralRef = core.getInput("central_ref") || "main";
+            const applyChanges = mode === "apply";
+
+            if (!["dry-run", "apply"].includes(mode)) {
+              throw new Error(`Invalid mode '${mode}'. Use 'dry-run' or 'apply'.`);
+            }
+
+            let filterRegex = null;
+            if (repoFilter) {
+              filterRegex = new RegExp(repoFilter);
+            }
+
+            const path = ".github/workflows/sync-issue-metadata.yml";
+            const desiredContent = [
+              "name: Sync Issue Metadata",
+              "",
+              "on:",
+              "  issues:",
+              "    types:",
+              "      - opened",
+              "",
+              "permissions:",
+              "  contents: read",
+              "  issues: write",
+              "",
+              "jobs:",
+              "  sync:",
+              "    if: github.actor != 'github-actions[bot]'",
+              `    uses: ${owner}/.github/.github/workflows/sync-issue-metadata.yml@${centralRef}`,
+              "",
+            ].join("\n");
+
+            const normalize = (value) => (value || "").replace(/\r\n/g, "\n").trimEnd();
+            const desiredNormalized = normalize(desiredContent);
+
+            const allRepos = await github.paginate(github.rest.repos.listForOrg, {
+              org: owner,
+              type: "all",
+              per_page: 100,
+            });
+
+            const targetRepos = allRepos.filter((repo) => {
+              if (repo.name === ".github") return false;
+              if (repo.archived || repo.disabled) return false;
+              if (repo.fork) return false;
+              if (filterRegex && !filterRegex.test(repo.name)) return false;
+              return true;
+            });
+
+            core.info(`Selected ${targetRepos.length} repositories (mode=${mode}).`);
+
+            const stats = {
+              unchanged: [],
+              created: [],
+              updated: [],
+              failed: [],
+            };
+
+            for (const repo of targetRepos) {
+              const repoName = repo.name;
+              const branch = repo.default_branch || "main";
+              let existingSha = null;
+              let existingText = "";
+
+              try {
+                const current = await github.rest.repos.getContent({
+                  owner,
+                  repo: repoName,
+                  path,
+                  ref: branch,
+                });
+
+                if (Array.isArray(current.data) || current.data.type !== "file") {
+                  stats.failed.push({
+                    repo: repoName,
+                    reason: "Target path exists but is not a regular file",
+                  });
+                  continue;
+                }
+
+                existingSha = current.data.sha;
+                const encoded = (current.data.content || "").replace(/\n/g, "");
+                existingText = Buffer.from(encoded, "base64").toString("utf8");
+              } catch (error) {
+                if (error.status !== 404) {
+                  stats.failed.push({
+                    repo: repoName,
+                    reason: `Read failed (${error.status || "unknown"}): ${error.message}`,
+                  });
+                  continue;
+                }
+              }
+
+              if (normalize(existingText) === desiredNormalized) {
+                stats.unchanged.push(repoName);
+                continue;
+              }
+
+              if (!applyChanges) {
+                if (existingSha) {
+                  stats.updated.push(repoName);
+                } else {
+                  stats.created.push(repoName);
+                }
+                continue;
+              }
+
+              try {
+                await github.rest.repos.createOrUpdateFileContents({
+                  owner,
+                  repo: repoName,
+                  path,
+                  message: "chore: sync issue metadata workflow caller",
+                  content: Buffer.from(desiredContent, "utf8").toString("base64"),
+                  branch,
+                  sha: existingSha || undefined,
+                });
+
+                if (existingSha) {
+                  stats.updated.push(repoName);
+                } else {
+                  stats.created.push(repoName);
+                }
+              } catch (error) {
+                stats.failed.push({
+                  repo: repoName,
+                  reason: `Write failed (${error.status || "unknown"}): ${error.message}`,
+                });
+              }
+            }
+
+            const summary = [
+              `Mode: ${mode}`,
+              `Repos selected: ${targetRepos.length}`,
+              `Created: ${stats.created.length}`,
+              `Updated: ${stats.updated.length}`,
+              `Unchanged: ${stats.unchanged.length}`,
+              `Failed: ${stats.failed.length}`,
+            ];
+
+            core.info(summary.join(" | "));
+
+            await core.summary
+              .addHeading("Issue Workflow Caller Sync")
+              .addList(summary)
+              .addHeading("Created")
+              .addCodeBlock(stats.created.join("\n") || "(none)")
+              .addHeading("Updated")
+              .addCodeBlock(stats.updated.join("\n") || "(none)")
+              .addHeading("Unchanged")
+              .addCodeBlock(stats.unchanged.join("\n") || "(none)")
+              .addHeading("Failed")
+              .addCodeBlock(
+                stats.failed.map((item) => `${item.repo}: ${item.reason}`).join("\n") || "(none)",
+              )
+              .write();
+
+            if (stats.failed.length > 0 && applyChanges) {
+              core.setFailed(`Sync finished with ${stats.failed.length} failures.`);
+            }
