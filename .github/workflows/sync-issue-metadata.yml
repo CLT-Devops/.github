@@ -188,7 +188,7 @@ jobs:
 
             if (isSubIssue && selectedLabel && selectedTypeRaw && descriptionText) {
               const firstLine = descriptionText.split("\n")[0].trim();
-              desiredTitle = `[${selectedLabel}] [${selectedTypeRaw}] - ${firstLine}`;
+              desiredTitle = `[${selectedLabel}][${selectedTypeRaw}] - ${firstLine}`;
               compactBody = descriptionText;
             } else if (isAtomicFix && descriptionText) {
               const firstLine = descriptionText.split("\n")[0].trim();

@@ -1,5 +1,5 @@
 name: "Sub-issue"
-description: "Sub-issue tecnica no formato [Label] [Type] - Descricao"
+description: "Sub-issue tecnica no formato [Label][Type] - Descricao"
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:
