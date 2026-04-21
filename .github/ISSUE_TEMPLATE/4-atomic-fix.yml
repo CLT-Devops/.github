@@ -1,0 +1,24 @@
+name: "Issue-atomica (Fix/Hotfix)"
+description: "Fix ou Hotfix sem escopo suficiente pra virar objetivo com sub-issues"
+projects: ["CLT-Devops/3"]
+type: "Bug"
+body:
+  - type: dropdown
+    id: categoria
+    attributes:
+      label: Categoria
+      description: Fix (bug comum) ou Hotfix (correcao urgente em producao).
+      options:
+        - Fix
+        - Hotfix
+    validations:
+      required: true
+
+  - type: textarea
+    id: description_text
+    attributes:
+      label: Descricao
+      description: "Problema e contexto. Sem label, sem type - issue-atomica resolve ela mesma."
+      placeholder: "Ex.: Corrigir timeout no handler completed"
+    validations:
+      required: true

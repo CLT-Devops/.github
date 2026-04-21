@@ -1,12 +1,13 @@
 ## Titulo do PR (padrao)
 <!--
-Use um destes formatos:
-Vx.y.z - [Label][Type] - Objetivo
-Vx.y.z - [SI] - Objetivo
+Use um destes formatos (sem versao no titulo - versionamento vai via tag no deploy):
+[Label][Type] - Objetivo         (PR de sub-issue normal)
+[Fix] - Objetivo                  (PR de issue-atomica Fix)
+[Hotfix] - Objetivo               (PR de issue-atomica Hotfix)
 -->
 
 ## Issue relacionada
-<!-- Obrigatorio. Ex.: Closes #123 -->
+<!-- Obrigatorio. Ex.: Closes #123. Para sub-issues acopladas no mesmo PR: Closes #2, #3, #4 -->
 Closes #
 
 ## Objetivo e contexto
@@ -32,7 +33,7 @@ Closes #
 - Plano de rollback:
 
 ## Checklist DoD (obrigatorio)
-- [ ] Escopo da issue foi entregue e validado
+- [ ] Escopo da sub-issue/issue-atomica foi entregue e validado
 - [ ] Testes (unit/integration/e2e) cobrindo o fluxo alterado
 - [ ] CI passou (lint, testes, checks de contrato quando aplicavel)
 - [ ] Logs estruturados atualizados (com correlation_id quando aplicavel)

@@ -1,62 +1,13 @@
-name: "Issue Geral"
-description: "V1.0.0 - [Label][Type] - Objetivo"
+name: "Issue-objetivo (Geral)"
+description: "Objetivo/entrega que sera quebrado em sub-issues"
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:
-  - type: input
-    id: version
-    attributes:
-      label: Versao
-      description: "Use o padrao com 3 blocos (ex.: V1.0.0)."
-      placeholder: "V1.0.0"
-    validations:
-      required: true
-
-  - type: dropdown
-    id: label
-    attributes:
-      label: Label
-      description: Label obrigatoria para classificacao.
-      options:
-        - DB
-        - AI
-        - Code
-        - Server
-        - Domain
-        - Story
-        - API
-        - Webhook
-        - AWS
-        - ETL
-        - Docker
-        - CI/CD
-        - Log
-        - QA
-        - Sec
-        - UI/UX
-        - Layout
-        - Component
-    validations:
-      required: true
-
-  - type: dropdown
-    id: type
-    attributes:
-      label: Type
-      description: Type obrigatorio da issue.
-      options:
-        - Task
-        - Bug
-        - Improvement
-        - Feature
-        - Story
-    validations:
-      required: true
-
   - type: textarea
     id: description_text
     attributes:
       label: Descricao
-      placeholder: "Descreva resumidamente a demanda..."
+      description: "Objetivo da issue. Sem versao, sem label, sem type - isso vive nas sub-issues."
+      placeholder: "Ex.: Agente de analise"
     validations:
       required: true
