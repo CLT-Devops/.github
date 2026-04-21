@@ -28,13 +28,10 @@ jobs:
             const TYPE_MAP = {
               task: "Task",
               bug: "Bug",
-              feature: "Feature",
-              improvement: "Feature",
-              story: "Feature",
             };
 
             const body = (issue.body || "").replace(/\r\n/g, "\n");
-            const isIssueForm = /^###\s*(Versao|Label|Type|Descricao|Descrição)\s*$/im.test(body);
+            const isIssueForm = /^###\s*(Label|Type|Categoria|Descricao|Descrição)\s*$/im.test(body);
             if (!isIssueForm) {
               core.info("Issue not created from configured issue form. Skipping.");
               return;
@@ -52,8 +49,7 @@ jobs:
               );
               const match = body.match(re);
               if (!match) return "";
-              const block = (match[2] || "").trim();
-              return block;
+              return (match[2] || "").trim();
             }
 
             function readField(fieldName) {
@@ -77,42 +73,6 @@ jobs:
                 .trim();
             }
 
-            function readCompactField(fieldName) {
-              const re = new RegExp(
-                `(^|\\n)${escapeRe(fieldName)}:\\s*(.+?)(?=\\n|$)`,
-                "i",
-              );
-              const match = body.match(re);
-              return match && match[2] ? match[2].trim() : "";
-            }
-
-            function parseStructuredTitle(value) {
-              const raw = (value || "").trim();
-              if (!raw) return null;
-
-              let match = raw.match(/^(.+?)\s-\s\[([^\]]+)\]\[([^\]]+)\]\s-\s(.+)$/);
-              if (match) {
-                return {
-                  version: match[1].trim(),
-                  label: match[2].trim(),
-                  type: match[3].trim(),
-                  objective: match[4].trim(),
-                };
-              }
-
-              match = raw.match(/^(.+?)\s-\s\[([^\]]+)\]\s\[([^\]]+)\]\s(.+)$/);
-              if (match) {
-                return {
-                  version: match[1].trim(),
-                  label: match[2].trim(),
-                  type: match[3].trim(),
-                  objective: match[4].trim(),
-                };
-              }
-
-              return null;
-            }
-
             function appendHtmlComments(text) {
               if (!text || htmlComments.length === 0) return text;
               const missing = htmlComments.filter((comment) => !text.includes(comment));
@@ -120,73 +80,26 @@ jobs:
               return `${text}\n${missing.join("\n")}`.trim();
             }
 
-            function extractVersionFromStructuredTitle(value) {
-              const raw = (value || "").trim();
-              if (!raw) return "";
-
-              let match = raw.match(/^(.+?)\s-\s\[[^\]]+\]\[[^\]]+\]\s-\s.+$/);
-              if (match && match[1]) return match[1].trim();
-
-              match = raw.match(/^(.+?)\s-\s\[[^\]]+\]\s\[[^\]]+\]\s.+$/);
-              if (match && match[1]) return match[1].trim();
-
-              return "";
-            }
-
-            async function getParentVersion(issueNumber) {
-              try {
-                const parentResp = await github.request(
-                  "GET /repos/{owner}/{repo}/issues/{issue_number}/parent",
-                  { owner, repo, issue_number: issueNumber },
-                );
-                const parentIssue = parentResp.data || {};
-                const titleVersion = extractVersionFromStructuredTitle(parentIssue.title || "");
-                if (titleVersion) return titleVersion;
-
-                const parentBody = (parentIssue.body || "").replace(/\r\n/g, "\n");
-                const bodyMatch = parentBody.match(/(^|\n)Versao:\s*(.+?)(?=\n|$)/i);
-                return bodyMatch && bodyMatch[2] ? bodyMatch[2].trim() : "";
-              } catch (err) {
-                if (err.status === 404) return "";
-                core.warning(`Could not load parent issue for #${issueNumber}: ${err.message}`);
-                return "";
-              }
-            }
-
-            function extractObjectiveFromTitle(value) {
-              const raw = (value || "").trim();
-              if (!raw) return "";
-
-              let match = raw.match(/^\[SI\]\s*-\s*(.+)$/i);
-              if (match && match[1]) return match[1].trim();
-
-              match = raw.match(/^.+?\s-\s\[[^\]]+\]\[[^\]]+\]\s-\s(.+)$/);
-              if (match && match[1]) return match[1].trim();
-
-              match = raw.match(/^.+?\s-\s\[[^\]]+\]\s\[[^\]]+\]\s(.+)$/);
-              if (match && match[1]) return match[1].trim();
-
-              return raw;
-            }
-
-            const titleData = parseStructuredTitle(issue.title);
-            const version = readField("Versao") || (titleData?.version || "") || readCompactField("Versao");
-            const selectedLabel = readField("Label") || (titleData?.label || "") || readCompactField("Label");
-            const selectedTypeRaw = readField("Type") || (titleData?.type || "") || readCompactField("Type");
-            const objective =
-              readField("Objetivo") ||
-              (titleData?.objective || "") ||
-              readCompactField("Objetivo") ||
-              extractObjectiveFromTitle(issue.title);
+            const selectedLabel = readField("Label");
+            const selectedTypeRaw = readField("Type");
+            const categoria = readField("Categoria");
             const descriptionText =
               readFieldMultiline("Descricao") || readFieldMultiline("Descrição");
             const selectedType = TYPE_MAP[(selectedTypeRaw || "").toLowerCase()] || "";
 
-            core.info(`Issue #${issue.number}`);
-            core.info(`Parsed: version='${version}', label='${selectedLabel}', type='${selectedTypeRaw}', objective='${objective}'`);
+            // Form detection:
+            //  - sub-issue: has Label AND Type
+            //  - atomic-fix: has Categoria (Fix/Hotfix)
+            //  - objetivo: only Descricao
+            const isSubIssue = !!selectedLabel && !!selectedTypeRaw;
+            const isAtomicFix = !!categoria;
+            const isObjetivo = !isSubIssue && !isAtomicFix;
 
-            // 1) Sync domain label from form.
-            if (selectedLabel && DOMAIN_LABELS.includes(selectedLabel)) {
+            core.info(`Issue #${issue.number}`);
+            core.info(`Parsed: label='${selectedLabel}', type='${selectedTypeRaw}', categoria='${categoria}', form=${isSubIssue ? "sub-issue" : isAtomicFix ? "atomic-fix" : "objetivo"}`);
+
+            // 1) Sync domain label (sub-issue only).
+            if (isSubIssue && DOMAIN_LABELS.includes(selectedLabel)) {
               const current = await github.paginate(
                 github.rest.issues.listLabelsOnIssue,
                 { owner, repo, issue_number: issue.number, per_page: 100 },
@@ -225,8 +138,8 @@ jobs:
               }
             }
 
-            // 2) Sync issue type (Task/Bug/Feature) from form.
-            if (selectedType) {
+            // 2) Sync issue type (sub-issue only; atomic-fix and objetivo come pre-set from the form-level `type:`).
+            if (isSubIssue && selectedType) {
               try {
                 const typeQuery = await github.graphql(
                   `query($owner: String!, $name: String!) {
@@ -272,34 +185,18 @@ jobs:
             // 3) Normalize title and compact body from form.
             let desiredTitle = "";
             let compactBody = "";
-            const isSubIssue =
-              issue.title.trim().startsWith("[SI] -") ||
-              (!version && !!selectedLabel && !!objective);
 
-            if (isSubIssue && objective) {
-              const parentVersion = await getParentVersion(issue.number);
-              desiredTitle = parentVersion
-                ? `${parentVersion} - [SI] - ${objective}`
-                : `[SI] - ${objective}`;
-              const bodyLines = [
-                `Label: ${selectedLabel || "-"}`,
-                "Type: Task",
-                `Objetivo: ${objective}`,
-              ];
-              compactBody = descriptionText
-                ? `${descriptionText}\n\n${bodyLines.join("\n")}`
-                : bodyLines.join("\n");
-            } else if (version && selectedLabel && selectedTypeRaw && objective) {
-              desiredTitle = `${version} - [${selectedLabel}][${selectedTypeRaw}] - ${objective}`;
-              const bodyLines = [
-                `Versao: ${version}`,
-                `Label: ${selectedLabel}`,
-                `Type: ${selectedTypeRaw}`,
-                `Objetivo: ${objective}`,
-              ];
-              compactBody = descriptionText
-                ? `${descriptionText}\n\n${bodyLines.join("\n")}`
-                : bodyLines.join("\n");
+            if (isSubIssue && selectedLabel && selectedTypeRaw && descriptionText) {
+              const firstLine = descriptionText.split("\n")[0].trim();
+              desiredTitle = `[${selectedLabel}][${selectedTypeRaw}] - ${firstLine}`;
+              compactBody = descriptionText;
+            } else if (isAtomicFix && descriptionText) {
+              const firstLine = descriptionText.split("\n")[0].trim();
+              desiredTitle = `[${categoria}] - ${firstLine}`;
+              compactBody = descriptionText;
+            } else if (isObjetivo && descriptionText) {
+              // Objetivo: do not rewrite title (user's title stays). Compact body only.
+              compactBody = descriptionText;
             }
 
             compactBody = appendHtmlComments(compactBody);

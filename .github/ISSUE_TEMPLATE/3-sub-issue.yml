@@ -1,5 +1,5 @@
 name: "Sub-issue"
-description: "Sub-issue no formato [SI] - Objetivo"
+description: "Sub-issue tecnica no formato [Label][Type] - Descricao"
 projects: ["CLT-Devops/3"]
 type: "Task"
 body:
@@ -27,6 +27,17 @@ body:
         - UI/UX
         - Layout
         - Component
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: Type obrigatorio da sub-issue.
+      options:
+        - Task
+        - Bug
     validations:
       required: true
 
